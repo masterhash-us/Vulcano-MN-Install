@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Make installer interactive and select normal mode by default.
-INTERACTIVE="y"
+INTERACTIVE="n"
 ADVANCED="n"
 BOOTSTRAP="y"
 
@@ -120,10 +120,10 @@ if [[ `free -m | awk '/^Mem:/{print $2}'` -lt 850 ]]; then
 fi
 
 # Check if we have enough disk space
-if [[ `df -k --output=avail / | tail -n1` -lt 10485760 ]]; then
-  echo "This installation requires at least 10GB of free disk space.";
-  exit 1
-fi
+#if [[ `df -k --output=avail / | tail -n1` -lt 10485760 ]]; then
+#  echo "This installation requires at least 10GB of free disk space.";
+#  exit 1
+#fi
 
 # Install tools for dig and systemctl
 echo "Preparing installation..."
@@ -134,7 +134,7 @@ systemctl --version >/dev/null 2>&1 || { echo "systemd is required. Are you usin
 
 # Get our current IP
 if [ -z "$EXTERNALIP" ]; then
-EXTERNALIP=`dig +short myip.opendns.com @resolver1.opendns.com`
+EXTERNALIP=$(dig +short -6 myip.opendns.com aaaa @resolver1.ipv6-sandbox.opendns.com)
 fi
 clear
 
@@ -343,9 +343,8 @@ listen=1
 server=1
 daemon=1
 logtimestamps=1
-maxconnections=256
+maxconnections=32
 externalip=${EXTERNALIP}
-bind=${BINDIP}:62543
 masternodeaddr=${EXTERNALIP}
 masternodeprivkey=${KEY}
 masternode=1
